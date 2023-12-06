@@ -10,7 +10,7 @@ import tw from "twin.macro"
 
      img{
         max-width: 80dvw;
-        margin-top: -15dvw;
+        ${tw` mt-[-15dvw] lg:mt-[0]`}
      }
     
   `
