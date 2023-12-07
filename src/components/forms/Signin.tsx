@@ -55,53 +55,53 @@ const Signin = () => {
             })
         }
     }
-
+    
     
 
     return (
-        <FStyles.Signin>
-        <title >Signin</title>
-    <FStyles.Form>
-    <div className=" my-[1rem] ">
-       <FStyles.Text fontSize="1.4rem" fontWeight="600" >Welcome back</FStyles.Text>
-       <FStyles.Text fontSize="15px" fontWeight="500" color={theme.darkGray} >Securely login to your account</FStyles.Text>
-    </div>
+            <FStyles.Signin>
+                 <title >Signin</title>
+            <FStyles.Form>
 
-    <form >
+            <div className=" my-[1rem] ">
+                <FStyles.Text fontSize="1.4rem" fontWeight="600" >Welcome back</FStyles.Text>
+                <FStyles.Text fontSize="15px" fontWeight="500" color={theme.darkGray} >
+                    Securely login to your account
+                </FStyles.Text>
+            </div>
+
+                <form >
+                    <Input 
+                    field={"email"} 
+                    value={formData.email} 
+                    placeholder="joe@example."
+                    type="text"
+                    updateVal={updateVal} 
+                    color={fieldColors.email} 
+                    error={formErrors.email} 
+                    updateColor={updateColor} 
+                    />
+                            
+                    <Input 
+                        field={"password"} 
+                        value={formData.password} 
+                        placeholder="Minimum of 8 characters"
+                        type="password"
+                        updateVal={updateVal} 
+                        color={fieldColors.password} 
+                        error={formErrors.password} 
+                        updateColor={updateColor} 
+                    />
 
 
 
-            <Input 
-                field={"email"} 
-                value={formData.email} 
-                fieldData={{label: "Email", placeholder: "joe@example.com",type: "text"}}
-                updateVal={updateVal} 
-                color={fieldColors.email} 
-                error={formErrors.email} 
-                updateColor={updateColor} 
-                 />
-                 
-            <Input 
-                field={"password"} 
-                value={formData.password} 
-                fieldData={{label: "Password", placeholder: "Minimum of 8 characters",type: "password"}}
-                updateVal={updateVal} 
-                color={fieldColors.password} 
-                error={formErrors.password} 
-                updateColor={updateColor} 
-                 />
-
-
-
-    <div className="mt-8">
-        <FStyles.Button>Log in</FStyles.Button>
-        <FStyles.CMText>Don't have an account?<Link to="/signup/patient"> Signup</Link></FStyles.CMText>
-    </div>
-
-    </form>
-    
-    </FStyles.Form>
-</FStyles.Signin>
+                    <div className="mt-8">
+                    <FStyles.Button>Log in</FStyles.Button>
+                    <FStyles.CMText>Don't have an account?<Link to="/signup/patient"> Signup</Link></FStyles.CMText>
+                    </div>
+                </form>
+            </FStyles.Form>
+            </FStyles.Signin>
     )
 }
 

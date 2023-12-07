@@ -1,26 +1,22 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import FStyles from "./Forms.styles";
 import { useTheme } from "styled-components";
 import { Input } from "./Input";
 import { Google } from "../general/Icons";
-import {  FieldDatas, FormEvents } from "../../types/types";
-import { Link, useParams } from "react-router-dom";
+import {  FieldDatas, FormEvents, FormData } from "../../types/types";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import TermAndCondition from "./TermsAndCondition";
+import axios from "axios";
 
-
-type FormData =  {
-    "fullname": string;
-    "email": string;
-    "password": string;
-    "confirmPassword": string;
-    "termsAndCondtionsAgreed": boolean;
-}
 
 function SignUp() {
 
     const theme = useTheme();
     const params = useParams();
+    const navigate = useNavigate();
     const [ passwordType, setPasswordType ] = useState("password");
     const [ confirmPasswordType, setConfirmPasswordType ] = useState("password");
+    const { REACT_APP_BURL:base_url } = process.env;
 
     const [ formData, setFormData ] = useState<FormData>({
         fullname: "", email: "", 
@@ -47,7 +43,7 @@ function SignUp() {
     const fieldData = {
         fullname: {
             label: "Full Name",
-            placeholder: "Akindiya Beulah",
+            placeholder: "",
             type: "text",
         },
         email: {
@@ -57,7 +53,7 @@ function SignUp() {
         },
         password: {
             label: "Password",
-            placeholder: "Minimum of 8 characters ",
+            placeholder: " ",
             type: "password",
         },
         confirmPassword: {
@@ -78,7 +74,6 @@ function SignUp() {
     }
 
     const toggleCheck = (e: ChangeEvent<HTMLInputElement>) => {
-
         setFormData( data => {
             return {
                 ...data,
@@ -88,28 +83,16 @@ function SignUp() {
     }
 
     const updateColor = (field:  React.FocusEvent<HTMLInputElement>, event: FormEvents) => {
-        if(event === FormEvents.FOCUS){
+        const color = event === FormEvents.FOCUS ? theme?.appColor : (
+            event === FormEvents.ERROR ? theme?.error : theme.gray
+        )
             setFieldColors( data => {
-                return{
+                return {
                     ...data,
-                    [field.target.name]: theme?.appColor
+                    [field.target.name]: color
                 }
             })
-        } else if(event === FormEvents.ERROR){
-            setFieldColors( data => {
-                return{
-                    ...data,
-                    [field.target.name]: theme.error
-                }
-            })
-        } else {
-            setFieldColors( data => {
-                return{
-                    ...data,
-                    [field.target.name]: theme?.gray
-                }
-            })
-        }
+       
     }
 
     const validateFormData = () => {
@@ -159,7 +142,7 @@ function SignUp() {
 
     
 
-    const submitForm = (e: any) => {
+    const submitForm = async (e: any) => {
         e.preventDefault();
 
         const role = params.user
@@ -184,19 +167,44 @@ function SignUp() {
 
             return;
         }
-       
-        // check that user is either doctor | patient
 
-        // check if any errors
-        // register user by role
-        // store the role, provided (password | google) and email encoded in the local storage
-        // redirect to login page
-        // if user signedup with social login redirect to profile completions
-        // if user signedup with social login on the login page dont showing input for password
+        const { fullname, email, password, confirmPassword, termsAndCondtionsAgreed } = formData;
+        const data = {
+            firstname: fullname.split(" ")[0] ,
+            lastname:  fullname.split(" ")[1],
+            email, password,
+            role: role?.toLowerCase()
+        }
 
-        console.log("type -",params.user);
-        console.log("data", formData );
+
+        try{
+
+            await  axios.post(`${base_url}/api/v1/auth/register`,data)
+            navigate("/login")
+        }catch(error: any){
+
+            if(error?.response?.data?.message === "Email has been taken"){
+                setFormErrors( errors => {
+                    return {
+                        ...errors,
+                        email: "*email has been taken"
+                    }
+                })
+            }
+
+            console.log(error);
+            
+        }
     }
+
+    useEffect(() => {
+        const role = params.user
+        if(role !== "patient" && role !==  "doctor"){
+            alert("Role is required")
+            navigate("/404?error=no-role-on-signup")
+            
+        }
+    },[params])
 
 
     return (
@@ -204,51 +212,80 @@ function SignUp() {
                 <title >Signup</title>
             <FStyles.Form>
             <div className=" my-[1rem]">
-               <FStyles.Text fontSize="1.4rem" fontWeight="600" >Create new account</FStyles.Text>
+               <FStyles.Text 
+                    fontSize="1.4rem" 
+                    fontWeight="600"
+                >
+                     Create new account
+                </FStyles.Text>
                <FStyles.Text fontSize="15px" fontWeight="500" color={theme.darkGray} >Create a account</FStyles.Text>
             </div>
 
             <form onSubmit={ e => submitForm(e)}>
-                { 
-                
-                Object.entries(formData)
-                .filter(([_,value]) => typeof value === "string")
-                .map(([key, value]) => {
-                    return (
-                        <Input 
-                        field={key} 
-                        value={value} 
-                        fieldData={fieldData[key as keyof FieldDatas]}
-                        updateVal={updateVal} 
-                        color={fieldColors[key as keyof FormData]} 
-                        error={formErrors[key as keyof FormData]} 
-                        updateColor={updateColor} 
-                         />
-                    )
-                })
-                }
 
+                 <Input 
+                   field={"fullname"} 
+                   value={formData.fullname} 
+                   updateVal={updateVal}
+                   label="Full Name"
+                   placeholder="Akindiya Beulah"
+                   type="text" 
+                   color={fieldColors.fullname} 
+                   error={formErrors.fullname} 
+                   updateColor={updateColor} 
+                 />
 
-            <FStyles.Checkbox>
-              <div>
-                <input 
-                    type="checkbox" 
+                 <Input 
+                   field={"email"} 
+                   value={formData.email} 
+                   updateVal={updateVal} 
+                   placeholder="you@example.com"
+                   type="text"
+                   color={fieldColors.email} 
+                   error={formErrors.email} 
+                   updateColor={updateColor} 
+                 />
+
+                 <Input 
+                   field={"password"} 
+                   value={formData.password} 
+                   type="password"
+                   placeholder="Minimum of 8 characters"
+                   updateVal={updateVal} 
+                   color={fieldColors.password} 
+                   error={formErrors.password} 
+                   updateColor={updateColor} 
+                 />
+
+                 <Input 
+                   field={"confirmPassword"} 
+                   value={formData.confirmPassword} 
+                   type="text"
+                   placeholder="Minimum of 8 characters"
+                   label="Confirm Password"
+                   updateVal={updateVal} 
+                   color={fieldColors.confirmPassword} 
+                   error={formErrors.confirmPassword} 
+                   updateColor={updateColor} 
+                 />
+
+                <TermAndCondition 
                     checked={formData.termsAndCondtionsAgreed} 
-                    onChange={e => toggleCheck(e)}
+                    error={formErrors.termsAndCondtionsAgreed}
+                    toggleFunc={toggleCheck}
                 />
-                <p>I agree to the <a href="/terms-of-service#terms" target="_blank">terms</a> & <a  href="/terms-of-service#terms" target="_blank">conditions</a></p>
-              </div>
-              { formErrors.termsAndCondtionsAgreed && <data>{formErrors.termsAndCondtionsAgreed}</data>}
 
-            </FStyles.Checkbox>
-            <div className="mt-8">
-                <FStyles.Button>Sign Up</FStyles.Button>
-                <FStyles.CMText>Already have an account?<Link to="/login"> Log in</Link></FStyles.CMText>
-            </div>
+                <div className="mt-8">
+                    <FStyles.Button>Sign Up</FStyles.Button>
+                    <FStyles.CMText>Already have an account?<Link to="/login"> Log in</Link></FStyles.CMText>
+                </div>
 
             </form>
             
-            <FStyles.GGLButton> <Google /> Connect With Google</FStyles.GGLButton>
+            <FStyles.GGLButton> 
+                <Google /> Connect With Google
+            </FStyles.GGLButton>
+
             </FStyles.Form>
         </FStyles.Signup>
     )

@@ -9,6 +9,15 @@ export type SignupType = {
     
 }
 
+
+export type FormData =  {
+    "fullname": string;
+    "email": string;
+    "password": string;
+    "confirmPassword": string;
+    "termsAndCondtionsAgreed": boolean;
+}
+
 export enum FormEvents {
         ERROR = "error",
         FOCUS = "focus",
@@ -22,14 +31,12 @@ export type InputPros = {
         updateVal: Function,
         updateColor: Function,
         error: string,
-        fieldData: FieldData
-    }
-    
- export type FieldData = {
-        label: string,
+        label?: string,
         placeholder: string,
         type: string,
-}
+    }
+    
+
 
 export type FieldDatas = {
         fullname: {

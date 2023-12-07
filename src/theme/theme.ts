@@ -8,5 +8,6 @@ export const defaultTheme = {
     gray: "#C9C9C9",
     darkGray: "#636363",
     deepGray: "#303030",
-    error:"rgb(239 68 68 / 1)"
+    error:"rgb(239 68 68 /1)"
 }
+
