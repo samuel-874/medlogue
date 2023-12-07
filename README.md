@@ -34,7 +34,7 @@ Open your browser and visit [http://localhost:3000](http://localhost:3000) to pr
 - **public**: Static assets and the HTML template.
 
 ## Preview
-![Medlogue Preview](path/to/local/preview/image.png)
+![Medlogue Preview](medlogue.png)
 
 ## Features
 - **User Authentication**: Secure user registration and login.
