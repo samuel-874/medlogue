@@ -42,8 +42,6 @@ Open your browser and visit [http://localhost:3000](http://localhost:3000) to pr
 - **Real-time Communication**: Seamless video consultations and chat messaging.
 - **User-friendly Interface**: Intuitive design for a positive user experience.
 
-## Contributing
-We welcome contributions! If you'd like to contribute to Medlogue, please follow our [Contribution Guidelines](CONTRIBUTING.md).
 
 ## Issues
 If you encounter any issues or have suggestions, please [open an issue](https://github.com/your-username/Medlogue/issues).

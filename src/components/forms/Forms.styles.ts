@@ -100,7 +100,7 @@ const StyledCheckBox = styled.label`
 
 `
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<{status?: "disabled"|"enabled"}>`
         text-align: center;
         width:100%;
         height: 50px;
@@ -111,9 +111,12 @@ const StyledButton = styled.button`
         border: 1px solid ${ props => props.theme.backgroundColor };;
         font-weight: 600;
         font-size: 16px;
-
+        white-space:nowrap;
+        text-overflow: ellipsis;
         font-style: normal;
         line-height: normal;
+        opacity: ${ props => props.status === "disabled" ? 0.5 : 1};
+        
 
         &:active{
             opacity: 0.7;
@@ -127,7 +130,7 @@ const StyledButton = styled.button`
         }
 `
 
-const StyledButton2 = styled.button`
+const StyledButton2 = styled(StyledButton)`
         text-align: center;
         width:100%;
         height: 50px;

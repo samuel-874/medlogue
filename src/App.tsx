@@ -10,6 +10,8 @@ import Onboarding from './components/onboarding/Onboarding';
 import SignUp from './components/forms/Signup';
 import { RedirectPage } from './components/general/GeneralComponents';
 import Signin from './components/forms/Signin';
+import { AppTemplate } from './components/secured-routes/AppTemplate';
+import { Dashboard } from './components/secured-routes/dashboard/Dashboard';
 
 function App() {
 
@@ -24,7 +26,10 @@ function App() {
          <Route path='/onboard' element={<Onboarding />} />
          <Route path='/signup/:user' element={<SignUp />} />
          <Route path='/login' element={<Signin />} />
-         <Route path='/confirmation' element={<RedirectPage />} />
+         <Route path='/callback/:provider/:user' element={<RedirectPage />} />
+         <Route path='/' element={<AppTemplate />} >
+            <Route path='dashboard' element={<Dashboard />} />
+         </Route>
       </Routes>
       </ThemeProvider>
     </div>

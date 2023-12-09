@@ -11,7 +11,18 @@ function PlaceHolder() {
 
     useEffect(()=>{
         setTimeout(() => {
-        // navigate("/onboard")        
+        // navigate("/onboard")  
+        const access_token = localStorage.getItem("access_token");
+        const info = localStorage.getItem("info");
+
+        if(access_token){
+            navigate("/dashboard")
+        }else if(info){
+            navigate("/login")
+        }else{
+            navigate("/onboard")
+        }
+
         }, 3000);
     },[])
 

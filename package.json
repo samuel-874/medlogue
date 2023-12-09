@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@auth0/auth0-react": "^2.2.3",
     "@reduxjs/toolkit": "^1.9.7",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -13,6 +14,9 @@
     "@types/react-dom": "^18.2.17",
     "axios": "^1.6.2",
     "axois": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-check-expiration": "^1.0.5",
+    "jwt-decode": "^4.0.0",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

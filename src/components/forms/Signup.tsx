@@ -3,7 +3,8 @@ import FStyles from "./Forms.styles";
 import { useTheme } from "styled-components";
 import { Input } from "./Input";
 import { Google } from "../general/Icons";
-import {  FieldDatas, FormEvents, FormData } from "../../types/types";
+import {  FormEvents, FormData } from "../../types/types";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import TermAndCondition from "./TermsAndCondition";
 import axios from "axios";
@@ -14,7 +15,9 @@ function SignUp() {
     const theme = useTheme();
     const params = useParams();
     const navigate = useNavigate();
+    const { loginWithRedirect } = useAuth0();
     const [ passwordType, setPasswordType ] = useState("password");
+    const [ isLoading, toggleLoading ] = useState(false)
     const [ confirmPasswordType, setConfirmPasswordType ] = useState("password");
     const { REACT_APP_BURL:base_url } = process.env;
 
@@ -111,7 +114,7 @@ function SignUp() {
 
 
         // is email syntax is valid
-        if(email?.length < 4){
+        if(email?.length < 1){
             error.email = "*enter an email to continue to Medlogue"
         }else if(!email.match(/^\S+@\S+\.com$/)){
             error.email = "*invalid email address"
@@ -137,7 +140,7 @@ function SignUp() {
             error.termsAndCondtionsAgreed = ""
         }
 
-        return error;
+       return error
     }
 
     
@@ -149,13 +152,11 @@ function SignUp() {
 
         const errors = validateFormData();
 
+
         setFormErrors(errors);
         if(!Object.values(errors).every( error => error.length === 0)){
-
-
             for (const [key, value] of Object.entries(errors)) {
                 if(value.length > 0){
-                    
                     setFieldColors( colors => {
                         return {
                             ...colors,
@@ -164,25 +165,35 @@ function SignUp() {
                     })
                 }
             }
-
+            
             return;
         }
+   
 
         const { fullname, email, password, confirmPassword, termsAndCondtionsAgreed } = formData;
         const data = {
             firstname: fullname.split(" ")[0] ,
             lastname:  fullname.split(" ")[1],
             email, password,
-            role: role?.toLowerCase()
+            role: role
         }
 
 
         try{
+            
+            toggleLoading(true)
+            const response  = await  axios.post(`${base_url}/api/v1/auth/register`,data)
+            const info = window.btoa(`${data.email} ${params.user} medlogue`)
+            const token = response.data?.access_token;
 
-            await  axios.post(`${base_url}/api/v1/auth/register`,data)
-            navigate("/login")
+            // setting credentials for signin purpose
+            localStorage.setItem("info",info)
+            localStorage.setItem("access_token",token)
+            navigate("/dashboard")
+
         }catch(error: any){
-
+            
+            toggleLoading(false)
             if(error?.response?.data?.message === "Email has been taken"){
                 setFormErrors( errors => {
                     return {
@@ -190,21 +201,31 @@ function SignUp() {
                         email: "*email has been taken"
                     }
                 })
+            }else{
+                alert("regisration was not sucessful try again")
             }
-
-            console.log(error);
-            
+            console.log(error);   
         }
     }
+
+    const connectWithGoogle = () => {
+        
+        console.info(`${window.origin}/callback/google/${params?.user||"patient"}`)
+        loginWithRedirect({
+          authorizationParams: {
+             connection: 'google-oauth2',
+             redirect_uri: `${window.origin}/callback/google/${params?.user||"patient"}`
+          }
+        });
+      }
 
     useEffect(() => {
         const role = params.user
         if(role !== "patient" && role !==  "doctor"){
             alert("Role is required")
-            navigate("/404?error=no-role-on-signup")
-            
+            navigate("/")
         }
-    },[params])
+    }, [params])
 
 
     return (
@@ -221,7 +242,7 @@ function SignUp() {
                <FStyles.Text fontSize="15px" fontWeight="500" color={theme.darkGray} >Create a account</FStyles.Text>
             </div>
 
-            <form onSubmit={ e => submitForm(e)}>
+            <form onSubmit={ e => !isLoading && submitForm(e)}>
 
                  <Input 
                    field={"fullname"} 
@@ -257,10 +278,10 @@ function SignUp() {
                    updateColor={updateColor} 
                  />
 
-                 <Input 
+                 <Input
                    field={"confirmPassword"} 
                    value={formData.confirmPassword} 
-                   type="text"
+                   type="password"
                    placeholder="Minimum of 8 characters"
                    label="Confirm Password"
                    updateVal={updateVal} 
@@ -270,19 +291,19 @@ function SignUp() {
                  />
 
                 <TermAndCondition 
-                    checked={formData.termsAndCondtionsAgreed} 
-                    error={formErrors.termsAndCondtionsAgreed}
-                    toggleFunc={toggleCheck}
+                  checked={formData.termsAndCondtionsAgreed} 
+                  error={formErrors.termsAndCondtionsAgreed}
+                  toggleFunc={toggleCheck}
                 />
 
                 <div className="mt-8">
-                    <FStyles.Button>Sign Up</FStyles.Button>
+                    <FStyles.Button status={isLoading ? "disabled" : "enabled"}>{ isLoading ? `Registering your account...` : `Sign Up`}</FStyles.Button>
                     <FStyles.CMText>Already have an account?<Link to="/login"> Log in</Link></FStyles.CMText>
                 </div>
 
             </form>
             
-            <FStyles.GGLButton> 
+            <FStyles.GGLButton onClick={() => connectWithGoogle()}> 
                 <Google /> Connect With Google
             </FStyles.GGLButton>
 
