@@ -8,6 +8,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import TermAndCondition from "./TermsAndCondition";
 import axios from "axios";
+import { Title } from "../general/GeneralComponents";
 
 
 function SignUp() {
@@ -182,7 +183,7 @@ function SignUp() {
         try{
             
             toggleLoading(true)
-            const response  = await  axios.post(`${base_url}/api/v1/auth/register`,data)
+            const response  = await  axios.post(`${base_url}/auth/register`,data)
             const info = window.btoa(`${data.email} ${params.user} medlogue`)
             const token = response.data?.access_token;
 
@@ -230,7 +231,7 @@ function SignUp() {
 
     return (
         <FStyles.Signup>
-                <title >Signup</title>
+                <Title label="Signup" />
             <FStyles.Form>
             <div className=" my-[1rem]">
                <FStyles.Text 

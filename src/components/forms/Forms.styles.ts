@@ -66,6 +66,18 @@ const StyledInput = styled.div`
             }
             /* border: 1px solid black; */
         }
+
+        select{
+            flex: 1;
+            height: 80%;
+
+            border: none;
+
+            &:focus{
+                outline: none;
+            }
+ 
+        }
     }
 
     data{
@@ -100,7 +112,7 @@ const StyledCheckBox = styled.label`
 
 `
 
-const StyledButton = styled.button<{status?: "disabled"|"enabled"}>`
+export const Button = styled.button<{status?: "disabled"|"enabled"}>`
         text-align: center;
         width:100%;
         height: 50px;
@@ -130,7 +142,7 @@ const StyledButton = styled.button<{status?: "disabled"|"enabled"}>`
         }
 `
 
-const StyledButton2 = styled(StyledButton)`
+const StyledButton2 = styled(Button)`
         text-align: center;
         width:100%;
         height: 50px;
@@ -181,7 +193,7 @@ const StyledComfirmation = styled.div`
     Form: StyledForm,
     Input: StyledInput,
     Checkbox: StyledCheckBox,
-    Button: StyledButton,
+    Button,
     GGLButton: StyledButton2,
     CMText: StyledComfirmation,
  }

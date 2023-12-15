@@ -3,18 +3,23 @@ import FStyles from "./Forms.styles";
 import { useTheme } from "styled-components";
 import { Input } from "./Input";
 import { Google } from "../general/Icons";
-import {  FieldDatas, FormEvents } from "../../types/types";
+import { FormEvents } from "../../types/types";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useAuth0  } from "@auth0/auth0-react";
+import { Title } from "../general/GeneralComponents";
+import { useAppDispatch } from "../../redux/hooks/hooks";
+import { notify } from "../../redux/notification/NotificationSlice";
+import { getRole } from "../general/service";
 
 
 const Signin = () => {
 
 
-    const { loginWithPopup, loginWithRedirect } = useAuth0();
+    const { loginWithRedirect } = useAuth0();
     const theme = useTheme();
     const params = useParams();
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [isloading, toggleLoading ] = useState(false)
     const [ formData, setFormData ] = useState({
@@ -116,7 +121,7 @@ const Signin = () => {
 
         const isValid = validateForm();
 
-        if(!isValid){
+        if(!isValid || isloading){
             return;
         }
 
@@ -130,10 +135,13 @@ const Signin = () => {
                 email: defaultUser.email || formData.email,
                 password: formData.password
             }
-           const response =  await axios.post(`${base_url}/api/v1/auth/login`,data)
+           const response =  await axios.post(`${base_url}/auth/login`,data)
 
             const token = response.data?.access_token;
-            const info = window.btoa(`${data.email} medlogue`)
+
+            const role = getRole(token);
+
+            const info = window.btoa(`${data.email} ${role} medlogue`)
 
 
             localStorage.setItem("access_token", token);
@@ -153,6 +161,12 @@ const Signin = () => {
                 })
 
                 updateColor("password",FormEvents.ERROR)
+            }else if(error?.response?.data?.message){
+                dispatch(notify({
+                    message: error?.response?.data?.message,
+                    show: true,
+                    error: true
+                }))
             }
 
             console.log(error);
@@ -166,7 +180,6 @@ const Signin = () => {
 
 
     useEffect(() => {
-
         const info = localStorage.getItem("info");
 
         if(!info){
@@ -200,7 +213,7 @@ const Signin = () => {
 
     return (
             <FStyles.Signin>
-                 <title >Signin</title>
+                 <Title label="Signin"  />
             <FStyles.Form>
 
             <div className=" my-[1rem] ">

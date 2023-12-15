@@ -1,9 +1,9 @@
 import { useState } from "react";
-import OB1 from "./components/OB1";
-import OB2 from "./components/OB2";
-import OB3 from "./components/OB3";
+import OB1 from "./components/Screen1";
+import OB2 from "./components/Screen4";
+import OB3 from "./components/Screen3";
 import Styles, { Index } from "./onboarding.styles";
-import OB4 from "./components/OB4";
+import OB4 from "./components/Screen2";
 import NavOptions from "./components/NavOptions";
 
 function Onboarding() {

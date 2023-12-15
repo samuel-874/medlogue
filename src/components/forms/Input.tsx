@@ -17,10 +17,12 @@ export const Input = (props :InputPros) => {
             <input
                name={props.field} 
                value={props.value}
+               readOnly={props.readonly}
                onChange={(e) => props.updateVal(e)}
                onFocus={ (e) => props.updateColor( e,FormEvents.FOCUS)}
                onBlur={ (e) => props.updateColor( e,FormEvents.DEFAULT)}
                type={type} placeholder={props.placeholder}
+               className={`${props.capitalize ? 'capitalize' : ''}`}
             />
 
         { props?.type === "password" &&             
